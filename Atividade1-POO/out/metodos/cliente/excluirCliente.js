@@ -11,15 +11,18 @@ class ExcluirCliente extends excluir_1.default {
         this.clientes = clientes;
         this.entrada = new entrada_1.default();
     }
+    // Método para exclusão de cliente com base no CPF
     excluir() {
-        //Variavel para pegar o cpf do cliente
+        // Recebe o CPF do cliente a ser excluído
         const cpf = this.entrada.receberTexto("CPF do cliente: ");
-        //Procurando o cliente na lista de clientes e excluindo
-        for (let i = 0; i < this.clientes.length; i++) {
-            if (this.clientes[i].getCPF.getValor === cpf) {
-                this.clientes.splice(i, 1);
-                console.log("Cliente excluido com sucesso!");
-            }
+        // Busca o cliente pelo CPF e o remove, se encontrado
+        const indexCliente = this.clientes.findIndex(cliente => cliente.getCPF.getValor === cpf);
+        if (indexCliente !== -1) {
+            this.clientes.splice(indexCliente, 1); // Remove cliente da lista
+            console.log("Cliente excluído com sucesso!");
+        }
+        else {
+            console.log("Cliente não encontrado. Verifique o CPF e tente novamente.");
         }
     }
 }

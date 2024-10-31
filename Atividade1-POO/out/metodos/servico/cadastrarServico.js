@@ -15,19 +15,20 @@ class CadastrarServico extends cadastro_1.default {
     }
     cadastrar() {
         console.clear();
-        //Variavel para autentificação do serviço
         const auth = new authServicos_1.default(this.servicos);
-        //Variaveis para armazenar os dados do serviço
-        let nome = this.entrada.receberTexto("Nome do serviço: ");
-        let nome_nao_valido = auth.autenticarServico(nome);
-        while (nome_nao_valido) {
-            console.log("Serviço já cadastrado");
-            nome = this.entrada.receberTexto("Nome do serviço: ");
-            nome_nao_valido = auth.autenticarServico(nome);
-        }
-        let preco = this.entrada.receberNumero("Preço do serviço: ");
+        let nome = this.obterNomeServico(auth);
+        const preco = this.entrada.receberNumero("Preço do serviço: ");
         const servico = new servico_1.default(nome, preco);
         this.servicos.push(servico);
+        console.log("Serviço cadastrado com sucesso!");
+    }
+    obterNomeServico(auth) {
+        let nome = this.entrada.receberTexto("Nome do serviço: ");
+        while (auth.autenticarServico(nome)) {
+            console.log("Serviço já cadastrado");
+            nome = this.entrada.receberTexto("Nome do serviço: ");
+        }
+        return nome;
     }
 }
 exports.default = CadastrarServico;

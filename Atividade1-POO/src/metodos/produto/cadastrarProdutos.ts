@@ -1,74 +1,37 @@
-
-import Auth from "../middleware/authCliente";
+import AuthProduto from "../middleware/authProdutos";
 import Produto from "../../modelos/produto";
 import Entrada from "../../entrada";
 import Cadastro from "../interfaces/cadastro";
-import AuthProduto from "../middleware/authProdutos";
 
-export default class CadasTrarProduto extends Cadastro {
- 
-
-
+export default class CadastrarProduto extends Cadastro {
     private produtos: Produto[];
-    private entrada: Entrada;   
-    
-    constructor(produtos: Produto[]){
+    private entrada: Entrada;
+
+    constructor(produtos: Produto[]) {
         super();
         this.produtos = produtos;
         this.entrada = new Entrada();
     }
 
-
-
-
     public cadastrar(): void {
         console.clear();
-        
-        //Variavel para autentificação do produto
+
+        // Variável para autenticação do produto
         const auth = new AuthProduto(this.produtos);
 
-
-        //Variaveis para armazenar os dados do produto
+        // Variáveis para armazenar os dados do produto
         let nome = this.entrada.receberTexto("Nome do produto: ");
-
-        let nome_nao_valido = auth.autenticarProduto(nome);
-
-        if(nome_nao_valido){
-           while(nome_nao_valido){ 
-            console.log("Produto já cadastrado");
+        
+        // Loop para verificar se o nome do produto já está cadastrado
+        while (auth.autenticarProduto(nome)) {
+            console.log("Produto já cadastrado. Tente novamente.");
             nome = this.entrada.receberTexto("Nome do produto: ");
-            nome_nao_valido = auth.autenticarProduto(nome);
-            if (!nome_nao_valido){
-                break;
-            }
-           }
         }
 
-
-        let preco = this.entrada.receberNumero("Preço do produto: ");
-
-
-
-
+        const preco = this.entrada.receberNumero("Preço do produto: ");
         const produto = new Produto(nome, preco);
-
-
-        this.produtos.push(produto);
-
-
-
-
-
         
-}
-
-
-
-
-    
-
-
-
-
-
+        this.produtos.push(produto);
+        console.log("Produto cadastrado com sucesso!");
+    }
 }

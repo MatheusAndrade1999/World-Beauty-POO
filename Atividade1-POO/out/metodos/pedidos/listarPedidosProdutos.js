@@ -15,19 +15,19 @@ class ListarPedidosProdutos extends listagem_1.default {
         console.clear();
         let executar = true;
         console.log("=== Listar Pedidos de Produtos ===\n");
-        const cpf_cliente = this.entrada.receberTexto("Digite o CPF do cliente: ");
-        const cliente = this.clientes.find(cliente => cliente.getCPF.getValor == cpf_cliente);
+        const cpfCliente = this.entrada.receberTexto("Digite o CPF do cliente: ").trim();
+        const cliente = this.clientes.find(cliente => cliente.getCPF.getValor === cpfCliente);
         if (cliente) {
-            console.log("\nProdutos consumidos pelo cliente: ");
+            console.log("\nProdutos consumidos pelo cliente:");
             cliente.getProdutosConsumidos.forEach(produto => {
-                console.log(`Nome: ${produto.getNome} - Preço: ${produto.getPreco} `);
+                console.log(`Nome: ${produto.getNome} - Preço: ${produto.getPreco}`);
             });
         }
         else {
-            console.log("Cliente não encontrado, verifique se o cpf existe ou se foi digitado corretamente");
+            console.log("Cliente não encontrado. Verifique se o CPF existe ou se foi digitado corretamente.");
         }
         while (executar) {
-            let opcao = this.entrada.receberTexto("\nPressione enter para continuar");
+            const opcao = this.entrada.receberTexto("\nPressione enter para continuar");
             switch (opcao) {
                 default:
                     executar = false;
@@ -35,8 +35,10 @@ class ListarPedidosProdutos extends listagem_1.default {
             }
         }
     }
-    listarProdutosMaisPedios() {
+    listarProdutosMaisPedidos() {
         console.clear();
+        // Aqui você pode implementar a lógica para listar os produtos mais pedidos
+        console.log("Em desenvolvimento...");
     }
 }
 exports.default = ListarPedidosProdutos;

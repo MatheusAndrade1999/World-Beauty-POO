@@ -11,88 +11,36 @@ class ServicosProdutosGenero {
         this.clientes = clientes;
         this.entrada = new entrada_1.default();
     }
-    //MASCULINOS
-    listarProdutosMasculino() {
+    // Método genérico para listar produtos ou serviços por gênero
+    listarMaisConsumidosPorGenero(itens, genero) {
         console.clear();
-        let execucao_masculino = true;
-        console.log("=== Listagem dos produtos mais consumidos por gênero masculino ===\n");
-        let clientes_masculinos = this.clientes.filter(cliente => cliente.getGenero == "M");
-        let produtos_masculinos = this.produtos.filter(produto => clientes_masculinos.some(cliente => cliente.getProdutosConsumidos.some(produto_consumido => produto_consumido.getNome == produto.getNome)));
-        let produtos = produtos_masculinos.sort((a, b) => b.getConsumo - a.getConsumo);
-        produtos.forEach(produto => {
-            console.log(`Nome: ${produto.getNome} - Vezes consumido: ${produto.getConsumo}`);
+        const clientesGenero = this.clientes.filter(cliente => cliente.getGenero === genero);
+        const itensConsumidos = itens.filter(item => clientesGenero.some(cliente => cliente.getProdutosConsumidos.some(consumo => consumo.getNome === item.getNome))).sort((a, b) => b.getConsumo - a.getConsumo);
+        itensConsumidos.forEach(item => {
+            console.log(`Nome: ${item.getNome} - Vezes consumido: ${item.getConsumo}`);
         });
-        while (execucao_masculino) {
-            let opcao = this.entrada.receberTexto("\nPressione enter para continuar");
-            switch (opcao) {
-                default:
-                    execucao_masculino = false;
-                    break;
-            }
-        }
+        this.aguardarContinuacao();
+    }
+    listarProdutosMasculino() {
+        console.log("=== Listagem dos produtos mais consumidos por gênero masculino ===\n");
+        this.listarMaisConsumidosPorGenero(this.produtos, "M");
     }
     listarServicosMasculino() {
-        console.clear();
-        let execucao_masculino = true;
         console.log("=== Listagem dos serviços mais consumidos por gênero masculino ===\n");
-        let clientes_masculinos = this.clientes.filter(cliente => cliente.getGenero == "M");
-        let servicos_masculinos = this.servicos.filter(servico => clientes_masculinos.some(cliente => cliente.getServicosConsumidos.some(servico_consumido => servico_consumido.getNome == servico.getNome)));
-        let servicos = servicos_masculinos.sort((a, b) => b.getConsumo - a.getConsumo);
-        servicos.forEach(servicos => {
-            console.log(`Nome: ${servicos.getNome} - Vezes consumido: ${servicos.getConsumo}`);
-        });
-        while (execucao_masculino) {
-            let opcao = this.entrada.receberTexto("\nPressione enter para continuar");
-            switch (opcao) {
-                default:
-                    execucao_masculino = false;
-                    break;
-            }
-        }
+        this.listarMaisConsumidosPorGenero(this.servicos, "M");
     }
-    //FEMININOS
     listarProdutosFeminino() {
-        console.clear();
-        let execucao_feminino = true;
         console.log("=== Listagem dos produtos mais consumidos por gênero feminino ===\n");
-        let clientes_femininos = this.clientes.filter(cliente => cliente.getGenero == "F");
-        let produtos_femininos = this.produtos.filter(produto => clientes_femininos.some(cliente => cliente.getProdutosConsumidos.some(produto_consumido => produto_consumido.getNome == produto.getNome)));
-        let produtos = produtos_femininos.sort((a, b) => b.getConsumo - a.getConsumo);
-        produtos.forEach(produto => {
-            console.log(`Nome: ${produto.getNome} - Vezes consumido: ${produto.getConsumo}`);
-        });
-        while (execucao_feminino) {
-            let opcao = this.entrada.receberTexto("\nPressione enter para continuar");
-            switch (opcao) {
-                default:
-                    execucao_feminino = false;
-                    break;
-            }
-        }
+        this.listarMaisConsumidosPorGenero(this.produtos, "F");
     }
     listarServicosFeminino() {
-        console.clear();
-        let execucao_feminino = true;
         console.log("=== Listagem dos serviços mais consumidos por gênero feminino ===\n");
-        let clientes_femininos = this.clientes.filter(cliente => cliente.getGenero == "F");
-        let servicos_femininos = this.servicos.filter(servico => clientes_femininos.some(cliente => cliente.getServicosConsumidos.some(servico_consumido => servico_consumido.getNome == servico.getNome)));
-        let servicos = servicos_femininos.sort((a, b) => b.getConsumo - a.getConsumo);
-        servicos.forEach(servicos => {
-            console.log(`Nome: ${servicos.getNome} - Vezes consumido: ${servicos.getConsumo}`);
-        });
-        while (execucao_feminino) {
-            let opcao = this.entrada.receberTexto("\nPressione enter para continuar");
-            switch (opcao) {
-                default:
-                    execucao_feminino = false;
-                    break;
-            }
-        }
+        this.listarMaisConsumidosPorGenero(this.servicos, "F");
     }
     listarServicosProdutosGenero() {
-        console.clear();
         let execucao = true;
         while (execucao) {
+            console.clear();
             console.log("=== Listar serviços ou produtos mais consumidos por gênero ===\n");
             console.log("1 - Produtos");
             console.log("2 - Serviços");
@@ -100,53 +48,48 @@ class ServicosProdutosGenero {
             const opcao = this.entrada.receberNumero("Digite a opção desejada: ");
             switch (opcao) {
                 case 1:
-                    let executarProdutos = true;
-                    while (executarProdutos) {
-                        console.clear();
-                        console.log("=== Listagem dos produtos mais consumidos por gênero ===\n");
-                        console.log("1 - Masculino");
-                        console.log("2 - Feminino");
-                        console.log("3 - Sair");
-                        const opcao_produto = this.entrada.receberNumero("Digite a opção desejada: ");
-                        switch (opcao_produto) {
-                            case 1:
-                                this.listarProdutosMasculino();
-                                break;
-                            case 2:
-                                this.listarProdutosFeminino();
-                                break;
-                            case 3:
-                                executarProdutos = false;
-                                break;
-                        }
-                    }
+                    this.exibirMenuGenero(() => this.listarProdutosMasculino(), () => this.listarProdutosFeminino());
                     break;
                 case 2:
-                    let executarServicos = true;
-                    while (executarServicos) {
-                        console.clear();
-                        console.log("=== Listagem dos serviços mais consumidos por gênero ===\n");
-                        console.log("1 - Masculino");
-                        console.log("2 - Feminino");
-                        console.log("3 - Sair");
-                        const opcao_servico = this.entrada.receberNumero("Digite a opção desejada: ");
-                        switch (opcao_servico) {
-                            case 1:
-                                this.listarServicosMasculino();
-                                break;
-                            case 2:
-                                this.listarServicosFeminino();
-                                break;
-                            case 3:
-                                executarServicos = false;
-                                break;
-                        }
-                    }
+                    this.exibirMenuGenero(() => this.listarServicosMasculino(), () => this.listarServicosFeminino());
+                    break;
                 case 3:
                     execucao = false;
                     break;
+                default:
+                    console.log("Opção inválida, tente novamente.");
+                    break;
             }
         }
+    }
+    // Método para exibir o menu de gênero e listar produtos ou serviços
+    exibirMenuGenero(callbackMasculino, callbackFeminino) {
+        let execucaoGenero = true;
+        while (execucaoGenero) {
+            console.clear();
+            console.log("=== Escolha o gênero ===\n");
+            console.log("1 - Masculino");
+            console.log("2 - Feminino");
+            console.log("3 - Voltar");
+            const opcao = this.entrada.receberNumero("Digite a opção desejada: ");
+            switch (opcao) {
+                case 1:
+                    callbackMasculino();
+                    break;
+                case 2:
+                    callbackFeminino();
+                    break;
+                case 3:
+                    execucaoGenero = false;
+                    break;
+                default:
+                    console.log("Opção inválida, tente novamente.");
+                    break;
+            }
+        }
+    }
+    aguardarContinuacao() {
+        this.entrada.receberTexto("\nPressione enter para continuar");
     }
 }
 exports.default = ServicosProdutosGenero;

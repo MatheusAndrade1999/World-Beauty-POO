@@ -4,13 +4,9 @@ class AuthProduto {
     constructor(produtos) {
         this.produtos = produtos;
     }
-    autenticarProduto(nome_produto) {
-        for (let i = 0; i < this.produtos.length; i++) {
-            if (this.produtos[i].getNome === nome_produto) {
-                return true;
-            }
-        }
-        return false;
+    // Método para verificar a existência de um produto pelo nome
+    autenticarProduto(nomeProduto) {
+        return this.produtos.some(produto => produto.getNome === nomeProduto);
     }
 }
 exports.default = AuthProduto;

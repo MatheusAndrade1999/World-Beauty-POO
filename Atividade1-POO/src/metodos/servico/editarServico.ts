@@ -1,80 +1,77 @@
-
-
-
 import Entrada from "../../entrada";
 import Servico from "../../modelos/servico";
 import Editar from "../interfaces/editar";
-
 import AuthServico from "../middleware/authServicos";
 import ListagemServico from "./listagemServico";
 
-export default class EditarServico extends Editar{
-    
+export default class EditarServico extends Editar {
     private servicos: Servico[];
     private entrada: Entrada;
-    
-    constructor(servicos: Servico[]){
+
+    constructor(servicos: Servico[]) {
         super();
         this.servicos = servicos;
         this.entrada = new Entrada();
-
     }
-    
-    
+
     public editar(): void {
         console.clear();
-
-        //Variaveis para autentificação
         const auth = new AuthServico(this.servicos);
-
-        let execucao = true
-
-
         const listagem = new ListagemServico(this.servicos);
+        
         listagem.listar();
-
-        let id = this.entrada.receberNumero("Digite o número do serviço que deseja editar: ")
-
-        while(execucao){
-            console.log("0 - Sair")
-            console.log("1 - Editar nome")
-            console.log("2 - Editar preço")
-
-            const opcao = this.entrada.receberNumero("Digite a opção desejada: ")
-
-            let servico_selecionado = this.servicos[id - 1]
-
-            if(opcao === 0){
-                console.log("Saindo...")
-                execucao = false
-            }
-
-            switch(opcao){
-                case 1:
-                    console.log(`\nServiço selecionado: ${servico_selecionado.getNome}`)
-                    let nome = this.entrada.receberTexto("Digite o novo nome do serviço: ")
-                    servico_selecionado.setNome = nome
-                    console.log("\n Nome alterado com sucesso! \n ")
-                    break;
-
-
-
-                case 2:
-                    console.log(`\nServiço selecionado: ${servico_selecionado.getNome}   Preço: R$${servico_selecionado.getPreco.toFixed(2)}`)
-                    let preco = this.entrada.receberNumero("Digite o novo preço do serviço: ")
-                    servico_selecionado.setPreco = preco
-                    console.log(" \n Preço alterado com sucesso! \n")
-                    break;
-                    
-            }
-
-              
+        const id = this.entrada.receberNumero("Digite o número do serviço que deseja editar: ");
         
+        if (this.servicos[id - 1]) {
+            this.executarEdicao(id - 1);
+        } else {
+            console.log("Serviço não encontrado.");
         }
-        
     }
 
+    private executarEdicao(index: number): void {
+        let execucao = true;
 
+        while (execucao) {
+            console.log("0 - Sair");
+            console.log("1 - Editar nome");
+            console.log("2 - Editar preço");
 
+            const opcao = this.entrada.receberNumero("Digite a opção desejada: ");
+            const servicoSelecionado = this.servicos[index];
 
+            switch (opcao) {
+                case 0:
+                    console.log("Saindo...");
+                    execucao = false;
+                    break;
+
+                case 1:
+                    this.editarNome(servicoSelecionado);
+                    break;
+
+                case 2:
+                    this.editarPreco(servicoSelecionado);
+                    break;
+
+                default:
+                    console.log("Opção inválida. Tente novamente.");
+                    break;
+            }
+        }
+    }
+
+    private editarNome(servico: Servico): void {
+        console.log(`\nServiço selecionado: ${servico.getNome}`);
+        const novoNome = this.entrada.receberTexto("Digite o novo nome do serviço: ");
+        servico.setNome = novoNome;
+        console.log("\n Nome alterado com sucesso! \n ");
+    }
+
+    private editarPreco(servico: Servico): void {
+        console.log(`\nServiço selecionado: ${servico.getNome}   Preço: R$${servico.getPreco.toFixed(2)}`);
+        const novoPreco = this.entrada.receberNumero("Digite o novo preço do serviço: ");
+        servico.setPreco = novoPreco;
+        console.log(" \n Preço alterado com sucesso! \n");
+    }
 }

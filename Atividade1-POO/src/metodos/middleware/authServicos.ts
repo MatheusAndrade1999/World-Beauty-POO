@@ -1,29 +1,15 @@
 import Servico from "../../modelos/servico";
 
-
-
-export default class AuthServico{
+export default class AuthServico {
 
     private servicos: Servico[];
 
-    constructor(servicos: Servico[]){
+    constructor(servicos: Servico[]) {
         this.servicos = servicos;
-
     }
 
-
-    public autenticarServico(nome_servico: string):boolean{
-        for(let i = 0; i < this.servicos.length; i++){
-            if(this.servicos[i].getNome === nome_servico){
-                return true;
-            }
-        }
-        return false;
-
+    // Método para verificar a existência de um serviço pelo nome
+    public autenticarServico(nomeServico: string): boolean {
+        return this.servicos.some(servico => servico.getNome === nomeServico);
     }
-
-
-
-
-
 }

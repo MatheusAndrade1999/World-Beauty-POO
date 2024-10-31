@@ -22,22 +22,28 @@ class PedirServico extends pedir_1.default {
         const cpf_cliente = this.entrada.receberTexto("Digite o CPF do cliente: ");
         const autenticacao = auth_cliente.cpfExiste(cpf_cliente);
         if (!autenticacao) {
-            console.log("Cliente não encontrado, verifique se o cpf existe ou se foi digitado corretamente");
+            console.log("Cliente não encontrado, verifique se o CPF existe ou se foi digitado corretamente.");
             return;
         }
         else {
             let executar = true;
-            const cliente = this.clientes.find(cliente => cliente.getCPF.getValor == cpf_cliente);
+            const cliente = this.clientes.find(cliente => cliente.getCPF.getValor === cpf_cliente);
             const listagem = new listagemServico_1.default(this.servicos);
             listagem.listar();
             while (executar) {
-                let id_servico = this.entrada.receberNumero("Digite o número do serviço que vai ser atribuido: ");
+                let id_servico = this.entrada.receberNumero("Digite o número do serviço que vai ser atribuído: ");
+                // Validação do índice do serviço
+                if (id_servico < 1 || id_servico > this.servicos.length) {
+                    console.log("Serviço inválido. Por favor, tente novamente.");
+                    continue;
+                }
                 const servico_selecionado = this.servicos[id_servico - 1];
                 cliente.setServicoConsumido = servico_selecionado;
                 cliente.setGastos = servico_selecionado.getPreco + cliente.getGastos;
                 servico_selecionado.setConsumo = servico_selecionado.getConsumo + 1;
                 console.log("Serviço adicionado com sucesso!");
-                this.entrada.receberTexto("Desaja adicionar mais serviços? (s/n): ") == "s" ? executar = true : executar = false;
+                const resposta = this.entrada.receberTexto("Deseja adicionar mais serviços? (s/n): ");
+                executar = resposta.toLowerCase() === "s";
             }
         }
     }

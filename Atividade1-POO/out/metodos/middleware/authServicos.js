@@ -4,13 +4,9 @@ class AuthServico {
     constructor(servicos) {
         this.servicos = servicos;
     }
-    autenticarServico(nome_servico) {
-        for (let i = 0; i < this.servicos.length; i++) {
-            if (this.servicos[i].getNome === nome_servico) {
-                return true;
-            }
-        }
-        return false;
+    // Método para verificar a existência de um serviço pelo nome
+    autenticarServico(nomeServico) {
+        return this.servicos.some(servico => servico.getNome === nomeServico);
     }
 }
 exports.default = AuthServico;

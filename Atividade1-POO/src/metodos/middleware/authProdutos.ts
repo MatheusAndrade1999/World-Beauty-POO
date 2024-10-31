@@ -1,28 +1,15 @@
 import Produto from "../../modelos/produto";
 
-
-export default class AuthProduto{
-
+export default class AuthProduto {
 
     private produtos: Produto[];
 
-
-    constructor(produtos: Produto[]){
+    constructor(produtos: Produto[]) {
         this.produtos = produtos;
-
     }
 
-
-
-
-    public autenticarProduto(nome_produto: string):boolean{
-        for(let i = 0; i < this.produtos.length; i++){
-            if(this.produtos[i].getNome === nome_produto){
-                return true;
-            }
-        }
-        return false;
-
+    // Método para verificar a existência de um produto pelo nome
+    public autenticarProduto(nomeProduto: string): boolean {
+        return this.produtos.some(produto => produto.getNome === nomeProduto);
     }
-
 }

@@ -16,23 +16,29 @@ class ExcluirServico extends excluir_1.default {
         console.clear();
         const listagem = new listagemServico_1.default(this.servicos);
         listagem.listar();
+        this.executarExclusao();
+    }
+    executarExclusao() {
         let execucao = true;
         while (execucao) {
-            console.log('\n===Exclusão de Serviços===');
+            console.log('\n=== Exclusão de Serviços ===');
             console.log('0 - Sair');
             const opcao = this.entrada.receberNumero('Digite o número do serviço que deseja excluir: ');
-            if (opcao > 0 && opcao <= this.servicos.length) {
-                this.servicos.splice(opcao - 1, 1);
-                console.log('Serviço excluído com sucesso!');
-            }
-            else if (opcao === 0) {
+            if (opcao === 0) {
                 console.log('Saindo...');
                 execucao = false;
+            }
+            else if (this.validarOpcao(opcao)) {
+                this.servicos.splice(opcao - 1, 1);
+                console.log('Serviço excluído com sucesso!');
             }
             else {
                 console.log('Serviço não encontrado, tente novamente');
             }
         }
+    }
+    validarOpcao(opcao) {
+        return opcao > 0 && opcao <= this.servicos.length;
     }
 }
 exports.default = ExcluirServico;

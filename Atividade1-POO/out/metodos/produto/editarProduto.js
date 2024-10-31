@@ -15,34 +15,38 @@ class EditarProduto extends editar_1.default {
     }
     editar() {
         console.clear();
-        //Variaveis para autentificação
         const auth = new authProdutos_1.default(this.produtos);
-        let execucao = true;
         const listagem = new listagemProduto_1.default(this.produtos);
         listagem.listar();
-        let id = this.entrada.receberNumero("Digite o número do produto que deseja editar: ");
+        const id = this.entrada.receberNumero("Digite o número do produto que deseja editar: ");
+        const produtoSelecionado = this.produtos[id - 1];
+        if (!produtoSelecionado) {
+            console.log("Produto não encontrado.");
+            return;
+        }
+        let execucao = true;
         while (execucao) {
             console.log("0 - Sair");
             console.log("1 - Editar nome");
             console.log("2 - Editar preço");
             const opcao = this.entrada.receberNumero("Digite a opção desejada: ");
-            let produto_selecionado = this.produtos[id - 1];
-            if (opcao === 0) {
-                console.log("Saindo...");
-                execucao = false;
-            }
             switch (opcao) {
+                case 0:
+                    console.log("Saindo...");
+                    execucao = false;
+                    break;
                 case 1:
-                    console.log(`\nProduto selecionado: ${produto_selecionado.getNome}`);
-                    let nome = this.entrada.receberTexto("Digite o novo nome do produto: ");
-                    produto_selecionado.setNome = nome;
-                    console.log("\n Nome alterado com sucesso! \n ");
+                    const novoNome = this.entrada.receberTexto("Digite o novo nome do produto: ");
+                    produtoSelecionado.setNome = novoNome;
+                    console.log("\nNome alterado com sucesso!\n");
                     break;
                 case 2:
-                    console.log(`\nProduto selecionado: ${produto_selecionado.getNome}   Preço: R$${produto_selecionado.getPreco.toFixed(2)}`);
-                    let preco = this.entrada.receberNumero("Digite o novo preço do produto: ");
-                    produto_selecionado.setPreco = preco;
-                    console.log(" \n Preço alterado com sucesso! \n");
+                    const novoPreco = this.entrada.receberNumero("Digite o novo preço do produto: ");
+                    produtoSelecionado.setPreco = novoPreco;
+                    console.log("Preço alterado com sucesso!\n");
+                    break;
+                default:
+                    console.log("Opção inválida. Tente novamente.");
                     break;
             }
         }

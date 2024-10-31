@@ -18,19 +18,19 @@ class ExcluirProduto extends excluir_1.default {
         listagem.listar();
         let execucao = true;
         while (execucao) {
-            console.log('\n===Exclusão de Produtos===');
+            console.log('\n=== Exclusão de Produtos ===');
             console.log('0 - Sair');
             const opcao = this.entrada.receberNumero('Digite o número do produto que deseja excluir: ');
-            if (opcao > 0 && opcao <= this.produtos.length) {
-                this.produtos.splice(opcao - 1, 1);
-                console.log('Produto excluído com sucesso!');
-            }
-            else if (opcao === 0) {
+            if (opcao === 0) {
                 console.log('Saindo...');
                 execucao = false;
             }
+            else if (opcao > 0 && opcao <= this.produtos.length) {
+                this.produtos.splice(opcao - 1, 1);
+                console.log('Produto excluído com sucesso!');
+            }
             else {
-                console.log('Produto não encontrado, tente novamente');
+                console.log('Produto não encontrado, tente novamente.');
             }
         }
     }
