@@ -1,0 +1,31 @@
+/* Navbar específico */
+.navbar {
+  background-color: #6c16a5 !important; /* Cor azul padrão do Material UI */
+}
+
+.navbar-toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.navbar-title {
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+}
+
+.navbar-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.navbar-button {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+}
+
+/* Removido o estilo global para o botão */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif !important;
+}
