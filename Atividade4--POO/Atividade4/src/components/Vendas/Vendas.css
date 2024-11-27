@@ -1,0 +1,60 @@
+.vendas-container {
+    padding: 32px;
+  }
+  
+  .vendas-input {
+    margin-bottom: 16px;
+  }
+  
+  .vendas-selecionados {
+    margin-top: 16px;
+  }
+  
+  .vendas-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .btn-remover {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .btn-remover:hover {
+    background-color: #d32f2f;
+  }
+  
+  .vendas-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+  }
+  
+  .btn-salvar {
+    background-color: #6c16a5;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .btn-salvar:disabled {
+    background-color: #9e9e9e;
+    cursor: not-allowed;
+  }
+  
+  .btn-salvar:hover:not(:disabled) {
+    background-color: #540d80;
+  }
+  
+  
