@@ -11,7 +11,7 @@ import './TabelaClientes.css';
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
   { field: 'nome', headerName: 'Nome', width: 150 },
-  { field: 'sobrenome', headerName: 'Sobrenome', width: 150 },  // Corrigido para 'sobrenome'
+  { field: 'sobrenome', headerName: 'Sobrenome', width: 150 },
   { 
     field: 'endereco', 
     headerName: 'Endereço', 
@@ -40,17 +40,13 @@ const columns: GridColDef[] = [
     field: 'email', 
     headerName: 'E-mail', 
     width: 200,
-    renderCell: (params) => {
-      return params.row.email ? params.row.email : 'E-mail não disponível';
-    }
+    renderCell: (params) => params.row.email || 'E-mail não disponível'
   },
   { 
     field: 'informacoesAdicionais', 
     headerName: 'Informações Adicionais', 
     width: 250,
-    renderCell: (params) => {
-      return params.row.endereco?.informacoesAdicionais || 'Sem informações adicionais';
-    }
+    renderCell: (params) => params.row.endereco?.informacoesAdicionais || 'Sem informações adicionais'
   },
 ];
 
@@ -65,15 +61,12 @@ const TabelaClientes: React.FC = () => {
     try {
       setLoading(true);
       const clientes = await listarClientes();
-      console.log(clientes);  // Verificar a estrutura dos dados
       if (clientes && Array.isArray(clientes)) {
         setRows(clientes);
       } else {
-        console.error('Dados inválidos recebidos:', clientes);
         alert('Erro ao carregar a lista de clientes.');
       }
     } catch (error) {
-      console.error('Erro ao buscar clientes:', error);
       alert('Erro ao carregar a lista de clientes.');
     } finally {
       setLoading(false);
@@ -93,8 +86,7 @@ const TabelaClientes: React.FC = () => {
         alert('Cliente(s) excluído(s) com sucesso!');
         setRows((prevRows) => prevRows.filter((row) => !selectedIds.includes(row.id)));
         setSelectedIds([]);
-      } catch (error) {
-        console.error('Erro ao excluir cliente:', error);
+      } catch {
         alert('Erro ao excluir cliente(s).');
       }
     }
@@ -111,10 +103,7 @@ const TabelaClientes: React.FC = () => {
   };
 
   const handleSaveUpdate = async () => {
-    if (!selectedClient) {
-      console.error('Não há cliente selecionado para atualização.');
-      return;
-    }
+    if (!selectedClient) return;
 
     try {
       const response = await atualizarCliente(selectedClient);
@@ -126,17 +115,24 @@ const TabelaClientes: React.FC = () => {
         setModalOpen(false);
         setSelectedClient(null);
       } else {
-        console.error('Erro ao atualizar o cliente: resposta inválida');
         alert('Erro ao atualizar cliente.');
       }
-    } catch (error) {
-      console.error('Erro ao atualizar cliente:', error);
+    } catch {
       alert('Erro ao atualizar cliente.');
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setSelectedClient((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: string, value: any) => {
+    const fields = field.split('.');
+    setSelectedClient((prev: any) => {
+      const updatedClient = { ...prev };
+      let current = updatedClient;
+      for (let i = 0; i < fields.length - 1; i++) {
+        current = current[fields[i]] = current[fields[i]] || {};
+      }
+      current[fields[fields.length - 1]] = value;
+      return updatedClient;
+    });
   };
 
   const handleSelection = (ids: any) => {
@@ -187,8 +183,8 @@ const TabelaClientes: React.FC = () => {
               />
               <TextField
                 label="Sobrenome"
-                value={selectedClient.sobrenome}  // Corrigido para 'sobrenome'
-                onChange={(e) => handleInputChange('sobrenome', e.target.value)}  // Corrigido para 'sobrenome'
+                value={selectedClient.sobrenome}
+                onChange={(e) => handleInputChange('sobrenome', e.target.value)}
                 fullWidth
                 margin="normal"
               />
@@ -199,26 +195,89 @@ const TabelaClientes: React.FC = () => {
                 fullWidth
                 margin="normal"
               />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
-                <Button
-                  variant="contained"
-                  style={{ marginRight: '8px' }}
-                  onClick={handleSaveUpdate}
-                >
-                  Salvar
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setModalOpen(false);
-                    setSelectedClient(null);
-                  }}
-                >
-                  Cancelar
-                </Button>
-              </div>
+              <h3>Endereço</h3>
+              <TextField
+                label="Rua"
+                value={selectedClient.endereco?.rua || ''}
+                onChange={(e) => handleInputChange('endereco.rua', e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Número"
+                value={selectedClient.endereco?.numero || ''}
+                onChange={(e) => handleInputChange('endereco.numero', e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Bairro"
+                value={selectedClient.endereco?.bairro || ''}
+                onChange={(e) => handleInputChange('endereco.bairro', e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Cidade"
+                value={selectedClient.endereco?.cidade || ''}
+                onChange={(e) => handleInputChange('endereco.cidade', e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Estado"
+                value={selectedClient.endereco?.estado || ''}
+                onChange={(e) => handleInputChange('endereco.estado', e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Código Postal"
+                value={selectedClient.endereco?.codigoPostal || ''}
+                onChange={(e) => handleInputChange('endereco.codigoPostal', e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Informações Adicionais"
+                value={selectedClient.endereco?.informacoesAdicionais || ''}
+                onChange={(e) => handleInputChange('endereco.informacoesAdicionais', e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <h3>Telefones</h3>
+              {selectedClient.telefones?.map((telefone: any, index: number) => (
+                <div key={index}>
+                  <TextField
+                    label={`DDD ${index + 1}`}
+                    value={telefone.ddd || ''}
+                    onChange={(e) =>
+                      handleInputChange(`telefones[${index}].ddd`, e.target.value)
+                    }
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label={`Número ${index + 1}`}
+                    value={telefone.numero || ''}
+                    onChange={(e) =>
+                      handleInputChange(`telefones[${index}].numero`, e.target.value)
+                    }
+                    fullWidth
+                    margin="normal"
+                  />
+                </div>
+              ))}
             </>
           )}
+          <div className="modal-buttons">
+            <Button variant="contained" onClick={handleSaveUpdate}>
+              Salvar
+            </Button>
+            <Button variant="outlined" onClick={() => setModalOpen(false)}>
+              Cancelar
+            </Button>
+          </div>
         </div>
       </Modal>
     </Paper>

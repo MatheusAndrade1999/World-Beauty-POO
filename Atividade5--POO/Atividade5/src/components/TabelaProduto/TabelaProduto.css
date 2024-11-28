@@ -1,0 +1,20 @@
+/* TabelaClientes.css */
+.table-container-produtos {
+  height: 400px;  /* Altura da tabela */
+  width: 85%;    /* Largura total */
+  margin: 20px 0; /* Margem superior e inferior */
+  margin-left: 7%;
+  margin-right: 10%;
+}
+  
+  /* Estilizando a tabela, se necessário */
+  .MuiDataGrid-root {
+    font-family: 'Poppins', sans-serif; /* Exemplo de uso da fonte Poppins */
+  }
+
+  .Botao-Produtos{
+    background-color: #6c16a5 !important;
+  }
+  
+  /* Ajustes adicionais podem ser feitos aqui */
+  

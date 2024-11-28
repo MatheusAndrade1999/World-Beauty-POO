@@ -15,12 +15,10 @@ export default class EditarClientes extends Editar {
         this.entrada = new Entrada();
     }
 
-    // Função principal para edição de dados do cliente
     public editar(): void {
         console.clear();
         const auth = new AuthCliente(this.clientes);
 
-        // Recebe e autentica o CPF do cliente para edição
         let cpf = this.entrada.receberTexto("CPF do cliente: ");
         const clienteExiste = auth.cpfExiste(cpf);
 
@@ -33,7 +31,6 @@ export default class EditarClientes extends Editar {
         let continuarEdicao = true;
 
         while (continuarEdicao) {
-            // Menu de opções de edição
             console.log("0 - Sair");
             console.log("1 - Editar nome");
             console.log("2 - Editar nome social");
@@ -50,19 +47,16 @@ export default class EditarClientes extends Editar {
                     break;
 
                 case 1:
-                    // Edição do nome do cliente
                     const novoNome = this.entrada.receberTexto("Novo nome do cliente: ");
                     cliente.setNome = novoNome;
                     break;
 
                 case 2:
-                    // Edição do nome social do cliente
                     const novoNomeSocial = this.entrada.receberTexto("Novo nome social: ");
                     cliente.setNomeSocial = novoNomeSocial;
                     break;
 
                 case 3:
-                    // Edição e validação do gênero
                     let genero = this.entrada.receberTexto("Novo gênero (M / F): ");
                     while (!auth.autenticarGenero(genero)) {
                         console.log("Gênero inválido. Aceito: M ou F.");
@@ -72,22 +66,17 @@ export default class EditarClientes extends Editar {
                     break;
 
                 case 4:
-                    // Edição e validação do CPF
                     this.editarCpf(cliente, auth);
                     break;
-
-                // Casos adicionais para RG e telefones (não incluídos) podem ser implementados
             }
         }
     }
 
-    // Método para edição e validação de um novo CPF
     private editarCpf(cliente: Cliente, auth: AuthCliente): void {
         let cpf = this.entrada.receberTexto("Novo CPF: ");
         let cpfEmissao = this.entrada.receberTexto("Nova data de emissão do CPF (DD/MM/AAAA): ");
         let cpfNaoValido = auth.autenticarCpf(cpf);
 
-        // Valida CPF até ser único
         while (cpfNaoValido) {
             console.log("CPF já cadastrado. Insira um novo CPF.");
             cpf = this.entrada.receberTexto("CPF: ");
@@ -99,9 +88,8 @@ export default class EditarClientes extends Editar {
         cliente.setCPF = new CPF(cpf, dataEmissaoCpf);
     }
 
-    // Função auxiliar para formatar data de entrada (DD/MM/AAAA) em objeto Date
     private formatarData(data: string): Date {
         const [dia, mes, ano] = data.split("/").map(Number);
-        return new Date(ano, mes - 1, dia); // Ajuste de mês para objeto Date
+        return new Date(ano, mes - 1, dia);
     }
 }

@@ -16,22 +16,16 @@
     background-color: #6c16a5 !important;
   }
   
+  /* Ajustes adicionais podem ser feitos aqui */
   .modal-container {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 90%; /* Ajuste conforme necessário */
-    max-width: 600px; /* Tamanho máximo */
-    max-height: 90%; /* Limita a altura */
-    overflow-y: auto; /* Adiciona scroll vertical */
-    background-color: #fff; /* Fundo branco */
-    padding: 16px;
+    width: 400px;
+    background-color: white;
+    padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    outline: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
-  
-  
-  
   

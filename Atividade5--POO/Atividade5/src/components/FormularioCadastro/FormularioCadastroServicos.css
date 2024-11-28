@@ -1,0 +1,19 @@
+.form-container-servico {
+    padding: 20px;
+    width: 400px;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container-servico h2 {
+    margin-bottom: 20px;
+}
+
+.form-container-servico .MuiTextField-root {
+    margin-bottom: 16px;
+}
+
+.MuiButton-root {
+    width: 100%;
+}

@@ -16,28 +16,23 @@ export default class CadastroCliente extends Cadastro {
         this.entrada = new Entrada();
     }
 
-    // Função principal para cadastro de cliente
     public cadastrar(): void {
         console.clear();
-        const auth = new AuthCliente(this.clientes); // Autenticação do cliente
+        const auth = new AuthCliente(this.clientes);
         
-        // Captura de dados principais do cliente
         const nome = this.entrada.receberTexto("Nome do cliente: ");
         const nomeSocial = this.entrada.receberTexto("Nome social: ");
         let genero = this.entrada.receberTexto("Gênero (M / F): ");
 
-        // Validação do gênero
         while (!auth.autenticarGenero(genero)) {
             console.log("Gênero inválido. Aceito: M ou F");
             genero = this.entrada.receberTexto("Gênero (M / F): ");
         }
 
-        // Coleta e validação do CPF
         let cpf = this.entrada.receberTexto("CPF: ");
         let cpfEmissao = this.entrada.receberTexto("Data de emissão do CPF (DD/MM/AAAA): ");
         let cpfNaoValido = auth.autenticarCpf(cpf);
 
-        // Confere o CPF e verifica se já existe
         while (cpfNaoValido) {
             console.log("CPF já cadastrado. Insira um novo CPF.");
             cpf = this.entrada.receberTexto("CPF: ");
@@ -45,28 +40,22 @@ export default class CadastroCliente extends Cadastro {
             cpfNaoValido = auth.autenticarCpf(cpf);
         }
 
-        // Formata a data de emissão do CPF
         const dataEmissaoCpf = this.formatarData(cpfEmissao);
         const cpfCliente = new CPF(cpf, dataEmissaoCpf);
 
-        // Adiciona os RGs ao cliente
         const rgs = this.adicionarRgs();
 
-        // Adiciona os telefones ao cliente
         const telefones = this.adicionarTelefones();
 
-        // Criação e adição do cliente
         const cliente = new Cliente(nome, nomeSocial, cpfCliente, genero.toUpperCase(), rgs, telefones);
         this.clientes.push(cliente);
     }
 
-    // Método auxiliar para formatar data a partir de uma string DD/MM/AAAA
     private formatarData(data: string): Date {
         const [dia, mes, ano] = data.split("/").map(Number);
-        return new Date(ano, mes - 1, dia); // Ajusta o mês para Date
+        return new Date(ano, mes - 1, dia);
     }
 
-    // Método para adicionar RGs ao cliente
     private adicionarRgs(): RG[] {
         const rgs: RG[] = [];
         let adicionarOutro = true;
@@ -84,7 +73,6 @@ export default class CadastroCliente extends Cadastro {
         return rgs;
     }
 
-    // Método para adicionar telefones ao cliente
     private adicionarTelefones(): Telefone[] {
         const telefones: Telefone[] = [];
         let adicionarOutro = true;
