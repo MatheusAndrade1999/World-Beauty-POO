@@ -1,87 +1,110 @@
-import React, { useState, useMemo } from "react";
-import { Box, TextField, Typography, Grid, MenuItem } from "@mui/material";
+import React, { useState, useEffect, useMemo } from "react";
+import { Box, TextField, Typography, Grid, MenuItem, Button } from "@mui/material";
+import axios from "axios";
 import "./Vendas.css";
 
-interface Produto {
-  id: string;
-  nome: string;
-  preco: number;
-}
-
-interface Servico {
-  id: string;
-  nome: string;
-  preco: number;
-}
-
-interface Cliente {
-  id: string;
-  nome: string;
-}
-
-const produtosDisponiveis: Produto[] = [
-  { id: "1", nome: "Shampoo 20 em 1", preco: 50 },
-  { id: "2", nome: "Pomada", preco: 30 },
-  { id: "3", nome: "Shampoo", preco: 25 },
-];
-
-const servicosDisponiveis: Servico[] = [
-  { id: "1", nome: "Corte de Cabelo", preco: 50 },
-  { id: "2", nome: "Escova", preco: 40 },
-  { id: "3", nome: "Tintura", preco: 80 },
-];
-
-const clientesDisponiveis: Cliente[] = [
-  { id: "1", nome: "Cliente X" },
-  { id: "2", nome: "Cliente Y" },
-];
-
 const Vendas: React.FC = () => {
-  const [clienteId, setClienteId] = useState("");
-  const [clienteNome, setClienteNome] = useState("");
-  const [produtosSelecionados, setProdutosSelecionados] = useState<Produto[]>([]);
-  const [servicosSelecionados, setServicosSelecionados] = useState<Servico[]>([]);
+  const [clientesDisponiveis, setClientesDisponiveis] = useState<any[]>([]);
+  const [produtosDisponiveis, setProdutosDisponiveis] = useState<any[]>([]);
+  const [servicosDisponiveis, setServicosDisponiveis] = useState<any[]>([]);
+  const [clienteId, setClienteId] = useState<string>("");
+  const [clienteNome, setClienteNome] = useState<string>("");
+  const [produtosSelecionados, setProdutosSelecionados] = useState<any[]>([]);
+  const [servicosSelecionados, setServicosSelecionados] = useState<any[]>([]);
+  const [cpf, setCpf] = useState<string>("");
 
-  // Atualiza o nome do cliente ao digitar um ID válido
+  // Buscar clientes, produtos e serviços ao carregar o componente
+  useEffect(() => {
+    const fetchDados = async () => {
+      try {
+        const clientesResponse = await axios.get("http://localhost:3000/clientes");
+        const produtosResponse = await axios.get("http://localhost:3000/produtos");
+        const servicosResponse = await axios.get("http://localhost:3000/servicos");
+
+        setClientesDisponiveis(clientesResponse.data);
+        setProdutosDisponiveis(produtosResponse.data);
+        setServicosDisponiveis(servicosResponse.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    };
+    fetchDados();
+  }, []);
+
+  // Função para lidar com a seleção de cliente
   const handleClienteIdChange = (id: string) => {
     setClienteId(id);
-    const cliente = clientesDisponiveis.find((c) => c.id === id);
-    setClienteNome(cliente ? cliente.nome : ""); // Define o nome ou deixa vazio
+    const cliente = clientesDisponiveis.find((c: any) => c.id === parseInt(id));
+    setClienteNome(cliente ? cliente.nome : "");
   };
 
+  // Função para adicionar um produto à lista de produtos selecionados
+  const handleProdutoChange = (produtoId: string) => {
+    const produtoSelecionado = produtosDisponiveis.find((produto) => produto.id === parseInt(produtoId));
+    if (produtoSelecionado) {
+      setProdutosSelecionados((prev) => [...prev, produtoSelecionado]);
+    }
+  };
+
+  // Função para adicionar um serviço à lista de serviços selecionados
+  const handleServicoChange = (servicoId: string) => {
+    const servicoSelecionado = servicosDisponiveis.find((servico) => servico.id === parseInt(servicoId));
+    if (servicoSelecionado) {
+      setServicosSelecionados((prev) => [...prev, servicoSelecionado]);
+    }
+  };
+
+  // Função para remover um produto individualmente
+  const handleRemoverProduto = (produtoId: string) => {
+    setProdutosSelecionados((prev) => prev.filter((produto) => produto.id !== parseInt(produtoId)));
+  };
+
+  // Função para remover um serviço individualmente
+  const handleRemoverServico = (servicoId: string) => {
+    setServicosSelecionados((prev) => prev.filter((servico) => servico.id !== parseInt(servicoId)));
+  };
+
+  // Função para calcular o valor total (produtos + serviços)
   const valorTotal = useMemo(() => {
     const totalProdutos = produtosSelecionados.reduce((acc, produto) => acc + produto.preco, 0);
     const totalServicos = servicosSelecionados.reduce((acc, servico) => acc + servico.preco, 0);
     return totalProdutos + totalServicos;
   }, [produtosSelecionados, servicosSelecionados]);
 
-  const handleAdicionarProduto = (produtoId: string) => {
-    const produto = produtosDisponiveis.find((p) => p.id === produtoId);
-    if (produto && !produtosSelecionados.some((p) => p.id === produtoId)) {
-      setProdutosSelecionados([...produtosSelecionados, produto]);
+  // Função para salvar a venda
+  const handleSalvarVenda = async () => {
+    try {
+     
+      // Salvar produtos
+      for (const produto of produtosSelecionados) {
+        const dadosProduto = {
+          cpf: cpf, 
+          produto_id: produto.id,
+          quantidade: 1, // Ajuste conforme necessário (pode ser uma entrada do usuário para quantidade)
+        };
+        await axios.post("http://localhost:3000/compras_produtos", dadosProduto);
+      }
+
+      // Salvar serviços
+      for (const servico of servicosSelecionados) {
+        const dadosServico = {
+          cpf: cpf,
+          servico_id: servico.id,
+        };
+        await axios.post("http://localhost:3000/compras_servicos", dadosServico);
+      }
+
+      // Exibir dados salvos no console
+      console.log("Cliente:", { id: clienteId, nome: clienteNome });
+      console.log("Produtos:", produtosSelecionados);
+      console.log("Serviços:", servicosSelecionados);
+
+      // Mensagem de sucesso
+      alert("Venda salva com sucesso!");
+    } catch (error) {
+      console.error("Erro ao salvar venda:", error);
+      alert("Erro ao salvar venda. Tente novamente.");
     }
-  };
-
-  const handleRemoverProduto = (produtoId: string) => {
-    setProdutosSelecionados(produtosSelecionados.filter((p) => p.id !== produtoId));
-  };
-
-  const handleAdicionarServico = (servicoId: string) => {
-    const servico = servicosDisponiveis.find((s) => s.id === servicoId);
-    if (servico && !servicosSelecionados.some((s) => s.id === servicoId)) {
-      setServicosSelecionados([...servicosSelecionados, servico]);
-    }
-  };
-
-  const handleRemoverServico = (servicoId: string) => {
-    setServicosSelecionados(servicosSelecionados.filter((s) => s.id !== servicoId));
-  };
-
-  const handleSalvarVenda = () => {
-    console.log("Cliente:", { id: clienteId, nome: clienteNome });
-    console.log("Produtos:", produtosSelecionados);
-    console.log("Serviços:", servicosSelecionados);
-    alert("Venda salva com sucesso!");
   };
 
   return (
@@ -90,78 +113,94 @@ const Vendas: React.FC = () => {
         Efetuar Venda
       </Typography>
 
+      {/* Seção de seleção do cliente */}
       <Box className="vendas-input">
         <TextField
-          label="ID do Cliente"
+          select
+          label="Selecionar Cliente"
           value={clienteId}
           onChange={(e) => handleClienteIdChange(e.target.value)}
           fullWidth
-          placeholder="Digite o ID do cliente"
-        />
+        >
+          {clientesDisponiveis.map((cliente: any) => (
+            <MenuItem key={cliente.id} value={cliente.id} onChange={()=>setCpf(cliente.CPF)}>
+              {cliente.nome} - CPF: {cliente.CPF}
+            </MenuItem>
+          ))}
+        </TextField>
         <Typography className="cliente-nome" variant="body1" color={clienteNome ? "textPrimary" : "error"}>
           {clienteNome || "Cliente não encontrado"}
         </Typography>
       </Box>
 
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <TextField
-            select
-            label="Adicionar Produto"
-            fullWidth
-            onChange={(e) => handleAdicionarProduto(e.target.value)}
-          >
-            {produtosDisponiveis.map((produto) => (
-              <MenuItem key={produto.id} value={produto.id}>
-                {produto.nome} - R${produto.preco.toFixed(2)}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Box className="vendas-selecionados">
-            <Typography variant="h6">Produtos Selecionados:</Typography>
-            {produtosSelecionados.map((produto) => (
-              <Box key={produto.id} className="vendas-item">
-                <Typography>{produto.nome}</Typography>
-                <button className="btn-remover" onClick={() => handleRemoverProduto(produto.id)}>
-                  Remover
-                </button>
-              </Box>
-            ))}
-          </Box>
-        </Grid>
+      {/* Seção de seleção de produtos */}
+      <Box className="produtos-selecionados">
+        <Typography variant="h6">Selecione um Produto</Typography>
+        <TextField
+          select
+          label="Produto"
+          onChange={(e) => handleProdutoChange(e.target.value)}
+          fullWidth
+        >
+          {produtosDisponiveis.map((produto: any) => (
+            <MenuItem key={produto.id} value={produto.id}>
+              {produto.nome} - Preço: R${produto.preco}
+            </MenuItem>
+          ))}
+        </TextField>
 
-        <Grid item xs={6}>
-          <TextField
-            select
-            label="Adicionar Serviço"
-            fullWidth
-            onChange={(e) => handleAdicionarServico(e.target.value)}
-          >
-            {servicosDisponiveis.map((servico) => (
-              <MenuItem key={servico.id} value={servico.id}>
-                {servico.nome} - R${servico.preco.toFixed(2)}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Box className="vendas-selecionados">
-            <Typography variant="h6">Serviços Selecionados:</Typography>
-            {servicosSelecionados.map((servico) => (
-              <Box key={servico.id} className="vendas-item">
-                <Typography>{servico.nome}</Typography>
-                <button className="btn-remover" onClick={() => handleRemoverServico(servico.id)}>
-                  Remover
-                </button>
-              </Box>
-            ))}
-          </Box>
+        {/* Exibição dos produtos selecionados com botão de remoção */}
+        <Grid container spacing={2}>
+          {produtosSelecionados.map((produto, index) => (
+            <Grid item key={index}>
+              <Typography>{produto.nome} - Preço: R${produto.preco}</Typography>
+              <Button variant="outlined" color="secondary" onClick={() => handleRemoverProduto(produto.id)}>
+                Remover
+              </Button>
+            </Grid>
+          ))}
         </Grid>
-      </Grid>
+      </Box>
 
-      <Box className="vendas-footer">
-        <Typography variant="h6">Valor Total: R${valorTotal.toFixed(2)}</Typography>
-        <button className="btn-salvar" onClick={handleSalvarVenda} disabled={!clienteId || valorTotal === 0}>
+      {/* Seção de seleção de serviços */}
+      <Box className="servicos-selecionados">
+        <Typography variant="h6">Selecione um Serviço</Typography>
+        <TextField
+          select
+          label="Serviço"
+          onChange={(e) => handleServicoChange(e.target.value)}
+          fullWidth
+        >
+          {servicosDisponiveis.map((servico: any) => (
+            <MenuItem key={servico.id} value={servico.id}>
+              {servico.nome} - Preço: R${servico.preco}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        {/* Exibição dos serviços selecionados com botão de remoção */}
+        <Grid container spacing={2}>
+          {servicosSelecionados.map((servico, index) => (
+            <Grid item key={index}>
+              <Typography>{servico.nome} - Preço: R${servico.preco}</Typography>
+              <Button variant="outlined" color="secondary" onClick={() => handleRemoverServico(servico.id)}>
+                Remover
+              </Button>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
+      {/* Seção do valor total */}
+      <Box className="total">
+        <Typography variant="h5">Valor Total: R${valorTotal}</Typography>
+      </Box>
+
+      {/* Botão para salvar a venda */}
+      <Box className="vendas-buttons">
+        <Button variant="contained" color="primary" onClick={handleSalvarVenda}>
           Salvar Venda
-        </button>
+        </Button>
       </Box>
     </Box>
   );

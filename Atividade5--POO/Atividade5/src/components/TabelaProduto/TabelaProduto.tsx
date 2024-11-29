@@ -7,75 +7,24 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import './TabelaProduto.css';
 
-interface Produto {
-  id: number;
-  nome: string;
-  preco: number;
-  quantidade: number;
-  consumo: number;
-}
-
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
   { field: 'nome', headerName: 'Nome', width: 150 },
-  { field: 'preco', headerName: 'Preço', width: 130 },
-  { field: 'quantidade', headerName: 'Quantidade', width: 120 },
-  { field: 'consumo', headerName: 'Consumo', width: 120 },
-  {
-    field: 'actions',
-    headerName: 'Ações',
-    width: 200,
-    renderCell: (params: GridRowParams) => (
-      <>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{
-            marginRight: '4px',
-            padding: '4px 10px',
-            fontSize: '0.8rem',
-            width: '75px',
-            minWidth: 'auto',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-          }}
-          onClick={() => handleEdit(params.row)}
-        >
-          Editar
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          style={{
-            marginRight: '4px',
-            padding: '4px 10px',
-            fontSize: '0.8rem',
-            width: '75px',
-            minWidth: 'auto',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-          }}
-          onClick={() => handleDelete(params.row.id)}
-        >
-          Excluir
-        </Button>
-      </>
-    ),
-  },
+  { field: 'preco', headerName: 'Preço', width: 100 },
+  { field: 'quantidade', headerName: 'Quantidade', width: 100 },
+  { field: 'criado_em', headerName: 'Criado em', width: 180, valueFormatter: (params) => new Date(params.value).toLocaleString() },
 ];
 
 const TabelaProduto: React.FC = () => {
-  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
+  const [selectedProduto, setSelectedProduto] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const fetchProdutos = async () => {
     try {
       const response = await axios.get('http://localhost:3000/produtos');
-      setProdutos(response.data);
+      setRows(response.data);
       setLoading(false);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
@@ -84,43 +33,26 @@ const TabelaProduto: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/produtos/${id}`);
-      if (response.status === 200) {
-        alert('Produto excluído com sucesso!');
-        fetchProdutos(); // Recarregar a lista de produtos após a exclusão
-      }
+      await axios.delete(`http://localhost:3000/produtos/${id}`);
+      alert('Produto excluído com sucesso!');
+      fetchProdutos();
     } catch (error) {
       console.error('Erro ao excluir produto:', error);
       alert('Erro ao excluir produto. Tente novamente.');
     }
   };
 
-  const handleEdit = (produto: Produto) => {
+  const handleEdit = (produto: any) => {
     setSelectedProduto(produto);
     setModalOpen(true);
   };
 
   const handleSaveEdit = async () => {
-    if (!selectedProduto) return;
-
-    // Validação simples antes de enviar
-    if (
-      !selectedProduto.nome ||
-      isNaN(selectedProduto.preco) ||
-      isNaN(selectedProduto.quantidade) ||
-      isNaN(selectedProduto.consumo)
-    ) {
-      alert('Por favor, preencha todos os campos corretamente.');
-      return;
-    }
-
     try {
-      const response = await axios.put(`http://localhost:3000/produtos/${selectedProduto.id}`, selectedProduto);
-      if (response.status === 200) {
-        alert('Produto atualizado com sucesso!');
-        setModalOpen(false);
-        fetchProdutos(); // Recarregar a lista de produtos após a edição
-      }
+      await axios.put(`http://localhost:3000/produtos/${selectedProduto.id}`, selectedProduto);
+      alert('Produto atualizado com sucesso!');
+      setModalOpen(false);
+      fetchProdutos();
     } catch (error) {
       console.error('Erro ao atualizar produto:', error);
       alert('Erro ao atualizar produto. Tente novamente.');
@@ -134,9 +66,37 @@ const TabelaProduto: React.FC = () => {
   return (
     <Paper className="table-container">
       <DataGrid
-        rows={produtos}
-        columns={columns}
+        rows={rows}
+        columns={[
+          ...columns,
+          {
+            field: 'actions',
+            headerName: 'Ações',
+            width: 200,
+            renderCell: (params: GridRowParams) => (
+              <>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ marginRight: '4px', fontSize: '0.8rem', width: '75px' }}
+                  onClick={() => handleEdit(params.row)}
+                >
+                  Editar
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  style={{ fontSize: '0.8rem', width: '75px' }}
+                  onClick={() => handleDelete(params.row.id)}
+                >
+                  Excluir
+                </Button>
+              </>
+            ),
+          },
+        ]}
         loading={loading}
+        initialState={{ pagination: { paginationModel: { page: 0, pageSize: 5 } } }}
         pageSizeOptions={[5, 10]}
         checkboxSelection
         sx={{ border: 0 }}
@@ -150,9 +110,7 @@ const TabelaProduto: React.FC = () => {
             label="Nome"
             name="nome"
             value={selectedProduto?.nome || ''}
-            onChange={(e) =>
-              setSelectedProduto({ ...selectedProduto!, nome: e.target.value })
-            }
+            onChange={(e) => setSelectedProduto({ ...selectedProduto, nome: e.target.value })}
             fullWidth
             margin="normal"
           />
@@ -160,34 +118,17 @@ const TabelaProduto: React.FC = () => {
             label="Preço"
             name="preco"
             value={selectedProduto?.preco || ''}
-            onChange={(e) =>
-              setSelectedProduto({ ...selectedProduto!, preco: Number(e.target.value) })
-            }
+            onChange={(e) => setSelectedProduto({ ...selectedProduto, preco: e.target.value })}
             fullWidth
             margin="normal"
-            type="number"
           />
           <TextField
             label="Quantidade"
             name="quantidade"
             value={selectedProduto?.quantidade || ''}
-            onChange={(e) =>
-              setSelectedProduto({ ...selectedProduto!, quantidade: Number(e.target.value) })
-            }
+            onChange={(e) => setSelectedProduto({ ...selectedProduto, quantidade: e.target.value })}
             fullWidth
             margin="normal"
-            type="number"
-          />
-          <TextField
-            label="Consumo"
-            name="consumo"
-            value={selectedProduto?.consumo || ''}
-            onChange={(e) =>
-              setSelectedProduto({ ...selectedProduto!, consumo: Number(e.target.value) })
-            }
-            fullWidth
-            margin="normal"
-            type="number"
           />
           <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between' }}>
             <Button 
